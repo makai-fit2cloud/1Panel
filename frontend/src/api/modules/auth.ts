@@ -1,6 +1,10 @@
 import { Login } from '@/api/interface/auth';
 import http from '@/api';
 
+export const ssoLoginApi = (token: string) => {
+    return http.get<Login.ResLogin>(`/auth/login/sso?token=` + token);
+};
+
 export const loginApi = (params: Login.ReqLoginForm) => {
     return http.post<Login.ResLogin>(`/auth/login`, params);
 };

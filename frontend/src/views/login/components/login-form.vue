@@ -173,7 +173,7 @@
 import { ref, reactive, onMounted, computed, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import type { ElForm } from 'element-plus';
-import { loginApi, getCaptcha, mfaLoginApi, checkIsDemo, getLanguage, checkIsIntl } from '@/api/modules/auth';
+import { loginApi, getCaptcha, mfaLoginApi, checkIsDemo, getLanguage, checkIsIntl,ssoLoginApi } from '@/api/modules/auth';
 import { GlobalStore, MenuStore, TabsStore } from '@/store';
 import { MsgSuccess } from '@/utils/message';
 import { useI18n } from 'vue-i18n';
@@ -387,6 +387,7 @@ const loginVerify = async () => {
     captcha.imagePath = res.data.imagePath ? res.data.imagePath : '';
     captcha.captchaID = res.data.captchaID ? res.data.captchaID : '';
     captcha.captchaLength = res.data.captchaLength ? res.data.captchaLength : 0;
+    globalStore.csrfToken = '';
 };
 
 const checkIsSystemDemo = async () => {
@@ -415,9 +416,36 @@ const loadDataFromDB = async () => {
     globalStore.setThemeConfig({ ...themeConfig.value, theme: theme, panelName: res.data.panelName });
 };
 
+const tokenVerify = async () => {
+    let csrfToken = globalStore.csrfToken;
+    if (!csrfToken) {
+        return;
+    }
+    console.log(csrfToken);
+    try {
+        isLoggingIn = true;
+        loading.value = true;
+        await ssoLoginApi(csrfToken);
+        globalStore.setLogStatus(true);
+        globalStore.setAgreeLicense(true);
+        await menuStore.setMenuList([]);
+        tabsStore.removeAllTabs();
+        globalStore.csrfToken = '';
+        MsgSuccess(i18n.t('commons.msg.loginSuccess'));
+        await loadDataFromDB();
+        await router.push({ name: 'home' });
+    } catch (error) {
+        await loginVerify();
+    } finally {
+        isLoggingIn = false;
+        loading.value = false;
+    }
+};
+
 onMounted(() => {
     globalStore.isOnRestart = false;
     checkIsSystemIntl();
+    tokenVerify();
     loginVerify();
     loadLanguage();
     document.title = globalStore.themeConfig.panelName;

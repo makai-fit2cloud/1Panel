@@ -23,6 +23,7 @@ type IAuthService interface {
 	GetResponsePage() (string, error)
 	VerifyCode(code string) (bool, error)
 	Login(c *gin.Context, info dto.Login, entrance string) (*dto.UserLoginInfo, error)
+	GenerateSession(c *gin.Context, name, authMethod string) (*dto.UserLoginInfo, error)
 	LogOut(c *gin.Context) error
 	MFALogin(c *gin.Context, info dto.MFALogin, entrance string) (*dto.UserLoginInfo, error)
 	GetSecurityEntrance() string
@@ -123,6 +124,10 @@ func (u *AuthService) MFALogin(c *gin.Context, info dto.MFALogin, entrance strin
 		c.SetCookie("SecurityEntrance", entranceValue, 0, "", "", false, true)
 	}
 	return loginUser, nil
+}
+
+func (u *AuthService) GenerateSession(c *gin.Context, name, authMethod string) (*dto.UserLoginInfo, error) {
+	return u.generateSession(c, name, authMethod)
 }
 
 func (u *AuthService) generateSession(c *gin.Context, name, authMethod string) (*dto.UserLoginInfo, error) {
