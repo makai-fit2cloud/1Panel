@@ -13,7 +13,6 @@ builds:
   - main: ./cmd/server/main.go
     binary: 1panel
     flags:
-      - -tags=xpack
       - -trimpath
     ldflags:
       - -w -s
