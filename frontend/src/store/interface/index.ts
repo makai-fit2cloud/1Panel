@@ -37,6 +37,7 @@ export interface GlobalState {
     productProExpires: number;
 
     errStatus: string;
+    csrfToken: string;
 }
 
 export interface MenuState {

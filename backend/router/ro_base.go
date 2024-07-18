@@ -13,6 +13,7 @@ func (s *BaseRouter) InitRouter(Router *gin.RouterGroup) {
 	{
 		baseRouter.GET("/captcha", baseApi.Captcha)
 		baseRouter.POST("/mfalogin", baseApi.MFALogin)
+		baseRouter.GET("/login/sso", baseApi.SsoLogin)
 		baseRouter.POST("/login", baseApi.Login)
 		baseRouter.GET("/issafety", baseApi.CheckIsSafety)
 		baseRouter.POST("/logout", baseApi.LogOut)

@@ -9,7 +9,10 @@ router.beforeEach((to, from, next) => {
     NProgress.start();
     axiosCanceler.removeAllPending();
     const globalStore = GlobalStore();
-
+    // 判断url中是否包含token
+    if (to.query.token) {
+        globalStore.csrfToken = to.query.token as string;
+    }
     if (to.name !== 'entrance' && !globalStore.isLogin) {
         next({
             name: 'entrance',
