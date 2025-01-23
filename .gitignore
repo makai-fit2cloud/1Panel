@@ -44,7 +44,6 @@ backend/xpack
 dist/
 1pctl
 1panel.service
-install.sh
 quick_start.sh
 cmd/server/fileList.txt
 .fileList.txt
